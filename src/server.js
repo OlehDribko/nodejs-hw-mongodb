@@ -6,7 +6,9 @@ import { getAllContact, getContactById } from './services/contacts.js';
 const app = express();
 
 dotenv.config();
+
 const PORT = Number(process.env.PORT);
+
 export const setupServer = () => {
   app.use(express.json());
   app.use(cors());
@@ -22,24 +24,26 @@ export const setupServer = () => {
 
   app.get('/contacts/:contactId', async (req, res, next) => {
     const { contactId } = req.params;
+    console.log(contactId);
     const contact = await getContactById(contactId);
     if (!contact) {
-      res.status(404).json({
+      return res.status(404).json({
         message: 'Contact not found',
       });
-      return;
     }
+    console.log(contact);
     res.status(200).json({
       status: 200,
       message: `Successfully found contact with id ${contactId}!`,
       data: contact,
     });
   });
+
   app.listen(PORT, (req, res) => {
     console.log(`Server is running on port ${PORT}`);
   });
 
-  app.use((req, res, next) => {
-    res.status(404).send({ message: 'Not found' });
-  });
+  // app.use((req, res, next) => {
+  //   res.status(404).send({ message: 'Not found' });
+  // });
 };
