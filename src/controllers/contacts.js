@@ -29,7 +29,9 @@ const getById = async (req, res) => {
   const { contactId } = req.params;
   const contact = await getContactById(contactId);
   if (!contact) {
-    throw createHttpError(404, 'Contact not found');
+    res
+      .status(404)
+      .json({ status: 404, message: 'Contact not found', data: contactId });
   }
   res.status(200).json({
     status: 200,
@@ -39,7 +41,7 @@ const getById = async (req, res) => {
 };
 const PatchupdateContact = async (req, res, next) => {
   const { contactId } = req.params;
-  const result = await updateContact(contactId, req.body, { upsert: true });
+  const result = await updateContact(contactId, req.body);
   if (!result) {
     throw createHttpError(404, 'Contact not found');
     return;
