@@ -2,8 +2,10 @@ import { contactCollection } from '../db/models/contacts.js';
 
 export const getAllContact = () => contactCollection.find();
 
-export const getContactById = (contactId) =>
-  contactCollection.findById(contactId);
+export const getContactById = (contactId) => {
+  const contact = contactCollection.findOne({ _id: contactId });
+  return contact;
+};
 
 export const createContact = async (payload) => {
   const contact = await contactCollection.create(payload);
