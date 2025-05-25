@@ -1,10 +1,14 @@
+import mongoose from 'mongoose';
+
 import { contactCollection } from '../db/models/contacts.js';
 
 export const getAllContact = () => contactCollection.find();
 
 export const getContactById = (contactId) => {
-  const contact = contactCollection.findOne({ _id: contactId });
-  return contact;
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    return null; // або можна кинути помилку 400
+  }
+  return contactCollection.findOne({ _id: contactId });
 };
 
 export const createContact = async (payload) => {

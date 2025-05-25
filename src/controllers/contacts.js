@@ -27,12 +27,10 @@ const getAll = async (req, res) => {
 };
 const getById = async (req, res) => {
   const { contactId } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(contactId)) {
-    throw createHttpError(404, 'Contact not found');
-  }
+
   const contact = await getContactById(contactId);
   if (!contact) {
-    throw createHttpError.NotFound('Contact not found');
+    throw createHttpError(404, 'Contact not found');
   }
   res.status(200).json({
     status: 200,
@@ -44,7 +42,7 @@ const PatchupdateContact = async (req, res, next) => {
   const { contactId } = req.params;
   const result = await updateContact(contactId, req.body);
   if (!result) {
-    throw createHttpError(404, 'Contact not found');
+    throw createHttpError.NotFound('Contact not found 11');
   }
   const status = result.isNew ? 201 : 200;
   res.status(status).json({
