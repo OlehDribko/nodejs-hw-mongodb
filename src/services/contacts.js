@@ -2,11 +2,28 @@ import mongoose from 'mongoose';
 
 import { contactCollection } from '../db/models/contacts.js';
 
-export const getAllContact = () => contactCollection.find();
+export const getAllContact = async (page, perPage) => {
+  const skip = page > 0 ? (page - 1) * perPage : 0;
+  const [total, contacts] = await Promise.all([
+    contactCollection.countDocuments(),
+    contactCollection.find().skip(skip).limit(perPage),
+  ]);
+  const totalPages = Math.ceil(total / perPage);
+
+  return {
+    data: contacts,
+    page,
+    perPage,
+    totalItems: total,
+    totalPages,
+    hasPreviousPage: page > 1,
+    hasNextPage: totalPages > page,
+  };
+};
 
 export const getContactById = (contactId) => {
   if (!mongoose.Types.ObjectId.isValid(contactId)) {
-    return null; // або можна кинути помилку 400
+    return null;
   }
   return contactCollection.findOne({ _id: contactId });
 };

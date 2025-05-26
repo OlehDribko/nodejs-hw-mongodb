@@ -7,6 +7,7 @@ import {
   updateContact,
   deleteContact,
 } from '../services/contacts.js';
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 
 const createNewContact = async (req, res) => {
   const newContact = await createContact(req.body);
@@ -18,7 +19,8 @@ const createNewContact = async (req, res) => {
 };
 
 const getAll = async (req, res) => {
-  const contacts = await getAllContact();
+  const { page, perPage } = parsePaginationParams(req.query);
+  const contacts = await getAllContact(page, perPage);
   res.status(200).json({
     status: 200,
     message: 'Successfully found contacts!',
