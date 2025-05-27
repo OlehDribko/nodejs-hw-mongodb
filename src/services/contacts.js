@@ -2,11 +2,15 @@ import mongoose from 'mongoose';
 
 import { contactCollection } from '../db/models/contacts.js';
 
-export const getAllContact = async (page, perPage) => {
+export const getAllContact = async (page, perPage, sortBy, sortOrder) => {
   const skip = page > 0 ? (page - 1) * perPage : 0;
   const [total, contacts] = await Promise.all([
     contactCollection.countDocuments(),
-    contactCollection.find().skip(skip).limit(perPage),
+    contactCollection
+      .find()
+      .sort({ [sortBy]: sortOrder })
+      .skip(skip)
+      .limit(perPage),
   ]);
   const totalPages = Math.ceil(total / perPage);
 
