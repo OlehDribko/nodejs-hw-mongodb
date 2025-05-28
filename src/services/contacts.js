@@ -8,7 +8,7 @@ export const getAllContact = async (page, perPage, sortBy, sortOrder) => {
     contactCollection.countDocuments(),
     contactCollection
       .find()
-      .sort({ [sortBy]: sortOrder })
+      .sort([[sortBy, sortOrder]])
       .skip(skip)
       .limit(perPage),
   ]);
