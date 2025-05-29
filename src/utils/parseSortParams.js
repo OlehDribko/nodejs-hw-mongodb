@@ -12,7 +12,7 @@ const parseSortOrder = (value) => {
   if (typeof value === 'undefined') {
     return 'asc';
   }
-  if (value !== 'asc' || value !== 'desc') {
+  if (value !== 'asc' && value !== 'desc') {
     return 'asc';
   }
   return value;
