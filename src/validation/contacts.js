@@ -1,4 +1,5 @@
 import Joi from 'joi';
+
 export const createContactsSchema = Joi.object({
   name: Joi.string().min(3).max(20).required(),
   phoneNumber: Joi.number().required(),
@@ -13,4 +14,9 @@ export const updateContactsSchema = Joi.object({
   email: Joi.string().min(3).max(20),
   isFavourite: Joi.boolean().default(false),
   contactType: Joi.string().valid('personal', 'home'),
+});
+
+export const logInUserSchema = Joi.object({
+  email: Joi.string().required(),
+  password: Joi.string().required(),
 });

@@ -1,6 +1,11 @@
 import { User } from '../db/models/auth.js';
 import createHttpError from 'http-errors';
 import bcrypt from 'bcrypt';
+import { randomBytes } from 'crypto';
+
+import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/constants.js';
+import { SessionAuth } from '../db/models/session.js';
+
 export const userRegisterService = async (payload) => {
   const isUser = await User.findOne({ email: payload.email });
   if (isUser) {
@@ -8,4 +13,27 @@ export const userRegisterService = async (payload) => {
   }
   const hashPassword = await bcrypt.hash(payload.password, 10);
   return await User.create({ ...payload, password: hashPassword });
+};
+export const userLogInService = async (payload) => {
+  const isRegistered = await User.findOne({ email: payload.email });
+  console.log(isRegistered);
+  if (!isRegistered) {
+    throw createHttpError(404, 'The user is nod available');
+  }
+  const isEqual = await bcrypt.compare(payload.password, isRegistered.password);
+  if (!isEqual) {
+    throw createHttpError(401, 'Unauthorized');
+  }
+
+  await SessionAuth.deleteOne({ userId: isRegistered._id });
+
+  const accessToken = randomBytes(30).toString('base64');
+  const refreshToken = randomBytes(30).toString('base64');
+  return await SessionAuth.create({
+    userId: isRegistered._id,
+    accessToken,
+    refreshToken,
+    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+    refreshTokenValidUntil: new Date(Date.now() + ONE_DAY),
+  });
 };

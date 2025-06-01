@@ -14,4 +14,4 @@ const sessionSchema = new mongoose.Schema({
   },
 });
 
-export const Session = mongoose.Schema('Session', sessionSchema);
+export const SessionAuth = mongoose.model('SessionAuth', sessionSchema);
