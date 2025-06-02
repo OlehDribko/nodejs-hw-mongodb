@@ -17,7 +17,6 @@ export const userRegisterService = async (payload) => {
 };
 export const userLogInService = async (payload) => {
   const isRegistered = await User.findOne({ email: payload.email });
-  console.log(isRegistered);
   if (!isRegistered) {
     throw createHttpError(404, 'The user is nod available');
   }
@@ -30,17 +29,24 @@ export const userLogInService = async (payload) => {
 
   const accessToken = randomBytes(30).toString('base64');
   const refreshToken = randomBytes(30).toString('base64');
-  return await SessionAuth.create({
+  const session = await SessionAuth.create({
     userId: isRegistered._id,
     accessToken,
     refreshToken,
     accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
     refreshTokenValidUntil: new Date(Date.now() + ONE_DAY),
   });
+  return {
+    accessToken,
+    refreshToken,
+    sessionId: session._id,
+  };
 };
 
 export const refreshSession = async (sessionId, refreshToken) => {
-  const session = await SessionAuth.findOne({ _id: sessionId });
+  const session = await SessionAuth.findOne({ _id: sessionId, refreshToken });
+  console.log(session);
+
   if (session === null) {
     throw createHttpError.Unauthorized('Session not found');
   }

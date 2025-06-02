@@ -4,7 +4,7 @@ import {
   refreshSession,
   userRegisterService,
 } from '../services/user.js';
-import { ONE_DAY } from '../constants/constants.js';
+import { ONE_DAY, FIFTEEN_MINUTES } from '../constants/constants.js';
 
 export const userRegisterController = async (req, res) => {
   const user = await userRegisterService(req.body);
@@ -20,6 +20,10 @@ export const userLogInController = async (req, res) => {
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
     expires: new Date(Date.now() + ONE_DAY),
+  });
+  res.cookie('sessionId', session.sessionId, {
+    httpOnly: true,
+    expires: new Date(Date.now() + FIFTEEN_MINUTES),
   });
   res.json({
     status: 200,
