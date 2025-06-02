@@ -12,15 +12,15 @@ import { logInUserSchema } from '../validation/contacts.js';
 
 const router = Router();
 
-router.post('/auth/register', ctrlWrapper(userRegisterController));
+router.post('/register', ctrlWrapper(userRegisterController));
 
 router.post(
-  '/auth/logIn',
+  '/logIn',
   validateBody(logInUserSchema),
   ctrlWrapper(userLogInController),
 );
 
-router.post('/auth/refresh', ctrlWrapper(refreshController));
+router.post('/refresh', ctrlWrapper(refreshController));
 
-router.post('/auth/logou', ctrlWrapper(userLogOutController));
+router.post('/logout', ctrlWrapper(userLogOutController));
 export default router;

@@ -45,7 +45,6 @@ export const userLogInService = async (payload) => {
 
 export const refreshSession = async (sessionId, refreshToken) => {
   const session = await SessionAuth.findOne({ _id: sessionId, refreshToken });
-  console.log(session);
 
   if (session === null) {
     throw createHttpError.Unauthorized('Session not found');

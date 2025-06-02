@@ -20,7 +20,7 @@ export const setupServer = () => {
 
   app.use(cors());
   app.use(cookieParser());
-  app.use(contactAuthRouter);
+  app.use('/auth', contactAuthRouter);
   app.use('/contacts', contactRouter);
 
   app.use(notFoundHandler);
