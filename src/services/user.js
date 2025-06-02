@@ -5,6 +5,7 @@ import { randomBytes } from 'crypto';
 
 import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/constants.js';
 import { SessionAuth } from '../db/models/session.js';
+import { now } from 'mongoose';
 
 export const userRegisterService = async (payload) => {
   const isUser = await User.findOne({ email: payload.email });
@@ -36,4 +37,29 @@ export const userLogInService = async (payload) => {
     accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
     refreshTokenValidUntil: new Date(Date.now() + ONE_DAY),
   });
+};
+
+export const refreshSession = async (sessionId, refreshToken) => {
+  const session = await SessionAuth.findOne({ _id: sessionId });
+  if (session === null) {
+    throw createHttpError.Unauthorized('Session not found');
+  }
+  if (session.refreshToken !== refreshToken) {
+    throw createHttpError.Unauthorized('Refresh token is invalid');
+  }
+  if (session.refreshTokenValidUntil < new Date()) {
+    throw createHttpError.Unauthorized('Refresh token is expired');
+  }
+  await SessionAuth.deleteOne({ _id: sessionId });
+  return SessionAuth.create({
+    userId: session.userId,
+    accessToken: randomBytes(30).toString('base64'),
+    refreshToken: randomBytes(30).toString('base64'),
+    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+    refreshTokenValidUntil: new Date(Date.now() + ONE_DAY),
+  });
+};
+
+export const logoutUser = async (sessionId) => {
+  await SessionAuth.deleteOne({ _id: sessionId });
 };
