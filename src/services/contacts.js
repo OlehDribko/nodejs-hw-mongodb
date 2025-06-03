@@ -2,12 +2,20 @@ import mongoose from 'mongoose';
 
 import { contactCollection } from '../db/models/contacts.js';
 
-export const getAllContact = async (page, perPage, sortBy, sortOrder) => {
+export const getAllContact = async (
+  page,
+  perPage,
+  sortBy,
+  sortOrder,
+  userId,
+) => {
+  const filter = { userId };
+
   const skip = page > 0 ? (page - 1) * perPage : 0;
   const [total, contacts] = await Promise.all([
     contactCollection.countDocuments(),
     contactCollection
-      .find()
+      .find(filter)
       .sort([[sortBy, sortOrder]])
       .skip(skip)
       .limit(perPage),
@@ -25,36 +33,35 @@ export const getAllContact = async (page, perPage, sortBy, sortOrder) => {
   };
 };
 
-export const getContactById = (contactId) => {
+export const getContactById = (contactId, userId) => {
   if (!mongoose.Types.ObjectId.isValid(contactId)) {
     return null;
   }
-  return contactCollection.findOne({ _id: contactId });
+  return contactCollection.findOne({ _id: contactId, userId });
 };
 
 export const createContact = async (payload) => {
   const contact = await contactCollection.create(payload);
   return contact;
 };
-export const updateContact = async (contactId, payload, options) => {
-  const rawResult = await contactCollection.findOneAndUpdate(
-    { _id: contactId },
+export const updateContact = async (contactId, payload, userId) => {
+  const updateContact = await contactCollection.findOneAndUpdate(
+    { _id: contactId, userId },
     payload,
     {
       new: true,
-      includeResultMetadata: true,
-      ...options,
     },
   );
-  if (!rawResult || !rawResult.value) return null;
+  if (!updateContact) return null;
   return {
-    contact: rawResult.value,
-    isNew: Boolean(rawResult?.lastErrorObject?.upserted),
+    contact: updateContact,
+    isNew: false,
   };
 };
-export const deleteContact = async (contactId) => {
+export const deleteContact = async (contactId, userId) => {
   const contactForDelete = await contactCollection.findOneAndDelete({
     _id: contactId,
+    userId,
   });
   return contactForDelete;
 };

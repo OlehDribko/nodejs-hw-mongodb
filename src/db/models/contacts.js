@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { model, Schema } from 'mongoose';
 const contactsSchema = new Schema(
   {
@@ -22,8 +23,17 @@ const contactsSchema = new Schema(
       required: true,
       default: 'personal',
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
   },
-  { timestamps: true },
+
+  {
+    timestamps: true,
+    versionKey: false,
+  },
 );
 contactsSchema.set('toJSON', {
   versionKey: false,
