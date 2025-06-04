@@ -15,6 +15,7 @@ export const userRegisterController = async (req, res) => {
     data: user,
   });
 };
+
 export const userLogInController = async (req, res) => {
   const session = await userLogInService(req.body);
   res.cookie('refreshToken', session.refreshToken, {
@@ -57,5 +58,5 @@ export const userLogOutController = async (req, res) => {
   }
   res.clearCookie('sessionId');
   res.clearCookie('refreshToken');
-  res.status(404).send();
+  res.status(204).send();
 };

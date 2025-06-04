@@ -8,11 +8,15 @@ import {
 } from '../controllers/authController.js';
 
 import { validateBody } from '../middlewares/validateBody.js';
-import { logInUserSchema } from '../validation/contacts.js';
+import { logInUserSchema, registerUserSchema } from '../validation/auth.js';
 
 const router = Router();
 
-router.post('/register', ctrlWrapper(userRegisterController));
+router.post(
+  '/register',
+  validateBody(registerUserSchema),
+  ctrlWrapper(userRegisterController),
+);
 
 router.post(
   '/logIn',
