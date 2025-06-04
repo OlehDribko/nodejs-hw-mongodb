@@ -13,7 +13,7 @@ export const getAllContact = async (
 
   const skip = page > 0 ? (page - 1) * perPage : 0;
   const [total, contacts] = await Promise.all([
-    contactCollection.countDocuments(),
+    contactCollection.countDocuments(filter),
     contactCollection
       .find(filter)
       .sort([[sortBy, sortOrder]])
