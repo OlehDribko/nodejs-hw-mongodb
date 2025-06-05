@@ -5,6 +5,7 @@ import {
   userRegisterService,
 } from '../services/user.js';
 import { ONE_DAY, FIFTEEN_MINUTES } from '../constants/constants.js';
+import nodeMailerService from '../services/nodeMailerService.js';
 
 export const userRegisterController = async (req, res) => {
   const user = await userRegisterService(req.body);
@@ -59,4 +60,14 @@ export const userLogOutController = async (req, res) => {
   res.clearCookie('sessionId');
   res.clearCookie('refreshToken');
   res.status(204).send();
+};
+
+export const sendRefreshEmailContoller = async (req, res) => {
+  const { email } = req.body;
+  const mail = nodeMailerService.mailOptionGenerator({
+    from: 'oleg.dr.ua1@gmail.com',
+    to: email,
+    subject: 'refresh',
+    text: 'text',
+  });
 };

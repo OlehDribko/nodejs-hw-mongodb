@@ -5,6 +5,7 @@ import {
   userLogInController,
   userLogOutController,
   refreshController,
+  sendRefreshEmailContoller,
 } from '../controllers/authController.js';
 
 import { validateBody } from '../middlewares/validateBody.js';
@@ -27,4 +28,7 @@ router.post(
 router.post('/refresh', ctrlWrapper(refreshController));
 
 router.post('/logout', ctrlWrapper(userLogOutController));
+
+router.post('/send-reset-email', ctrlWrapper(sendRefreshEmailContoller));
+
 export default router;
