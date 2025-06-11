@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 
 import contactRouter from './routes/contacts.js';
@@ -8,8 +7,6 @@ import contactAuthRouter from './routes/auth.js';
 import { getAllContact, getContactById } from './services/contacts.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
-
-dotenv.config();
 
 const PORT = Number(process.env.PORT);
 

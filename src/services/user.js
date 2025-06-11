@@ -5,7 +5,8 @@ import { randomBytes } from 'crypto';
 
 import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/constants.js';
 import { SessionAuth } from '../db/models/session.js';
-import { now } from 'mongoose';
+
+import { sendEmail } from '../utils/sendEmail.js';
 
 export const userRegisterService = async (payload) => {
   const isUser = await User.findOne({ email: payload.email });
@@ -67,4 +68,21 @@ export const refreshSession = async (sessionId, refreshToken) => {
 
 export const logoutUser = async (sessionId) => {
   await SessionAuth.deleteOne({ _id: sessionId });
+};
+
+export const requestResetToken = async (email) => {
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+};
+
+export const requestResetPassword = async (email) => {
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+  await sendEmail(user.email, 'Reset password', `<p>To Reset Password ple</p>`);
 };
