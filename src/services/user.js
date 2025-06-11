@@ -84,5 +84,7 @@ export const requestResetPassword = async (email) => {
   if (!user) {
     throw createHttpError(404, 'User not found');
   }
+  console.log(' Calling sendEmail...');
+
   await sendEmail(user.email, 'Reset password', `<p>To Reset Password ple</p>`);
 };

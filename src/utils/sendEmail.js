@@ -1,19 +1,35 @@
 import nodemailer from 'nodemailer';
-
+import dotenv from 'dotenv';
 import { SMTP } from '../constants/constants.js';
 import { getEnvWar } from './getEnv.js';
-import dotenv from 'dotenv';
+
 dotenv.config();
 const transporter = nodemailer.createTransport({
   host: getEnvWar(SMTP.SMTP_HOST),
-  port: SMTP.SMTP_PORT,
+  port: parseInt(getEnvWar(SMTP.SMTP_PORT), 10),
   secure: false,
   auth: {
-    user: SMTP.SMTP_USER,
-    pass: SMTP.SMTP_PASSWORD,
+    user: getEnvWar(SMTP.SMTP_USER),
+    pass: getEnvWar(SMTP.SMTP_PASSWORD),
   },
 });
 
-export const sendEmail = async (email) => {
-  return transporter.sendMail(email);
+export const sendEmail = async (to, subject, html) => {
+  const mail = {
+    from: getEnvWar(SMTP.SMTP_FROM),
+    to,
+    subject,
+    html,
+  };
+
+  try {
+    console.log('📨 Preparing to send email...');
+
+    const info = await transporter.sendMail(mail);
+    console.log('✅ Email sent:', info.messageId);
+    return info;
+  } catch (err) {
+    console.error('Email sending failed:', err);
+    throw err;
+  }
 };
