@@ -17,11 +17,9 @@ const createNewContact = async (req, res) => {
     ...req.body,
     userId: req.user._id,
   };
-  console.log('req file:', req.file);
   if (req.file) {
     contactData.photo = await saveFileToCloudinary(req.file);
   }
-  console.log(contactData);
   const newContact = await createContact(contactData);
   res.status(201).json({
     status: 201,

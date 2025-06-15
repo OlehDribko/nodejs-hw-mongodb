@@ -130,16 +130,11 @@ export const resetPassword = async (payload) => {
     email: entries.email,
     _id: entries.sub,
   });
-
   if (!user) {
     throw createHttpError(401, 'User not found');
   }
   const encryptedPassword = await bcrypt.hash(payload.password, 10);
-
-  await User.updateOne({
-    _id: user._id,
-    password: encryptedPassword,
-  });
+  await User.updateOne({ _id: user._id }, { password: encryptedPassword });
 };
 
 export const requestResetPassword = async (email) => {
