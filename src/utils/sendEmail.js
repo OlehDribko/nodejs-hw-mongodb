@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendEmail = async (to, subject, html) => {
+export const sendEmail = async ({ to, subject, html }) => {
   const mail = {
     from: getEnvWar(SMTP.SMTP_FROM),
     to,
@@ -23,10 +23,8 @@ export const sendEmail = async (to, subject, html) => {
   };
 
   try {
-    console.log('📨 Preparing to send email...');
-
     const info = await transporter.sendMail(mail);
-    console.log('✅ Email sent:', info.messageId);
+
     return info;
   } catch (err) {
     console.error('Email sending failed:', err);

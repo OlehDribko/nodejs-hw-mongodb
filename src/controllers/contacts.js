@@ -1,4 +1,6 @@
 import createHttpError from 'http-errors';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { getEnvWar } from '../utils/getEnv.js';
 
 import {
   getAllContact,
@@ -15,7 +17,11 @@ const createNewContact = async (req, res) => {
     ...req.body,
     userId: req.user._id,
   };
-
+  console.log('req file:', req.file);
+  if (req.file) {
+    contactData.photo = await saveFileToCloudinary(req.file);
+  }
+  console.log(contactData);
   const newContact = await createContact(contactData);
   res.status(201).json({
     status: 201,
@@ -59,10 +65,13 @@ const getById = async (req, res) => {
 };
 const PatchupdateContact = async (req, res, next) => {
   const { contactId } = req.params;
-
+  let photo = '';
+  if (req.file) {
+    photo = await saveFileToCloudinary(req.file);
+  }
   const userId = req.user._id;
 
-  const result = await updateContact(contactId, req.body, userId);
+  const result = await updateContact(contactId, req.body, userId, photo);
 
   if (!result) {
     throw createHttpError.NotFound('Contact not found 11');
@@ -88,6 +97,33 @@ const deleteContactContr = async (req, res, next) => {
 
   res.status(204).send();
 };
+const pathContactController = async (req, res, next) => {
+  const { studentId } = req.params;
+  const photo = req.file;
+  let photoUrl;
+
+  if (photo) {
+    if (getEnvWar('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+  const result = await updateContact(contactId, {
+    ...req.body,
+    photo: photoUrl,
+  });
+  if (!result) {
+    next(createHttpError(404, 'Contact not found'));
+    return;
+  }
+
+  res.json({
+    status: 200,
+    message: 'Successfully patched a contact!',
+    data: result.contact,
+  });
+};
 
 export default {
   createNewContact,
@@ -95,4 +131,5 @@ export default {
   getById,
   PatchupdateContact,
   deleteContactContr,
+  pathContactController,
 };
