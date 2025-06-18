@@ -6,9 +6,11 @@ import {
   requestResetToken,
   requestResetPassword,
   resetPassword,
+  loginOrSingnupWithGoogle,
 } from '../services/user.js';
 import { ONE_DAY, FIFTEEN_MINUTES } from '../constants/constants.js';
 import nodeMailerService from '../services/nodeMailerService.js';
+import { generateAuthUrl } from '../utils/googleOAuth2.js';
 
 export const userRegisterController = async (req, res) => {
   const user = await userRegisterService(req.body);
@@ -103,5 +105,34 @@ export const resetPasswordController = async (req, res) => {
     status: 200,
     message: 'Password was successfully reset!',
     data: {},
+  });
+};
+
+export const getGoogleAuthUrlController = (req, res) => {
+  const url = generateAuthUrl();
+  res.json({
+    status: 200,
+    message: 'Successfully get Google OAuth url!',
+    data: { url },
+  });
+};
+const setupSession = (req, session) => {
+  res.cookie('refreshToken', session.refreshToken, {
+    httpOnly: true,
+    expires: new Date(Date.now() + ONE_DAY),
+  });
+  res.cookie('sessionId', session._id, {
+    httpOnly: true,
+    expires: new Date(Date.now() + ONE_DAY),
+  });
+};
+
+export const loginWhithGoogleController = async (req, res) => {
+  const session = await loginOrSingnupWithGoogle(re.body.code);
+  setupSession(req, session);
+  req.json({
+    status: 200,
+    message: '',
+    data: { accessToken: session.accessToken },
   });
 };

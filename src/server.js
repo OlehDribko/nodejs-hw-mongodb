@@ -4,9 +4,9 @@ import cookieParser from 'cookie-parser';
 
 import contactRouter from './routes/contacts.js';
 import contactAuthRouter from './routes/auth.js';
-import { getAllContact, getContactById } from './services/contacts.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
 
 const PORT = Number(process.env.PORT);
 
@@ -20,6 +20,8 @@ export const setupServer = () => {
   app.use('/auth', contactAuthRouter);
 
   app.use('/contacts', contactRouter);
+
+  app.use('/api-docs', swaggerDocs());
 
   app.use(notFoundHandler);
 

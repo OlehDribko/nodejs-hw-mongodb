@@ -8,6 +8,7 @@ import {
   requestResetEmailController,
   requestResetPasswordController,
   resetPasswordController,
+  getGoogleAuthUrlController,
 } from '../controllers/authController.js';
 
 import { validateBody } from '../middlewares/validateBody.js';
@@ -31,6 +32,7 @@ router.post(
   validateBody(logInUserSchema),
   ctrlWrapper(userLogInController),
 );
+router.get('/get-oauth-url', ctrlWrapper(getGoogleAuthUrlController));
 
 router.post('/refresh', ctrlWrapper(refreshController));
 
@@ -42,7 +44,6 @@ router.post(
   validateBody(requestResetEmailSchema),
   ctrlWrapper(requestResetPasswordController),
 );
-
 router.post(
   '/reset-pwd',
   validateBody(resetPasswordSchema),
