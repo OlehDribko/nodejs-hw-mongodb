@@ -17,10 +17,6 @@ import { getEnvWar } from '../utils/getEnv.js';
 import handlebars from 'handlebars';
 import path from 'node:path';
 import fs from 'node:fs/promises';
-import {
-  getFullNameFromGoogleTokenPayload,
-  validateCode,
-} from '../utils/googleOAuth2.js';
 
 export const userRegisterService = async (payload) => {
   const isUser = await User.findOne({ email: payload.email });
@@ -161,18 +157,18 @@ export const requestResetPassword = async (email) => {
   });
 };
 
-export const loginOrSingnupWithGoogle = async (code) => {
-  const loginTicket = await validateCode(code);
-  const payload = await loginTicket.getPayload();
-  if (!payload) throw createHttpError(401);
+// export const loginOrSingnupWithGoogle = async (code) => {
+//   const loginTicket = await validateCode(code);
+//   const payload = await loginTicket.getPayload();
+//   if (!payload) throw createHttpError(401);
 
-  let user = await User.create({
-    email: payload.email,
-    name: getFullNameFromGoogleTokenPayload(payload),
-    password,
-    role: 'parent',
-  });
+//   let user = await User.create({
+//     email: payload.email,
+//     name: getFullNameFromGoogleTokenPayload(payload),
+//     password,
+//     role: 'parent',
+//   });
 
-  const newSession = createSession();
-  return await User.create({ userId: user._id, ...newSession });
-};
+//   const newSession = createSession();
+//   return await User.create({ userId: user._id, ...newSession });
+// };
